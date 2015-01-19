@@ -6,6 +6,7 @@ from time import sleep
 import string
 
 
+
 def magnet2torrent(magnet):
 
 
@@ -46,14 +47,17 @@ def magnet2torrent(magnet):
 
     
     #print("Done")
+    filelist = []
     if handle.has_metadata():
         torinfo = handle.get_torrent_info()
         filelist = []
         for f in torinfo.files():
-            filtereds = filter(lambda x: x in string.printable,str(f.path))
-        #print f.path
+            #filtereds = filter(lambda x: x in string.printable,str(f.path))
+            #print unicode(filtereds,'ascii')
+            #x = filtereds.decode('utf_8').encode('ascii')
+            #print x
         #print filtereds.encode(encoding="unicode_escape")
-            fsplit = filtereds.split('\\')
+            fsplit = f.path.split('\\')
     #sys.exit()
         #print fsplit
             filelist.append(fsplit[-1])
@@ -72,8 +76,10 @@ def magnet2torrent(magnet):
         except:
         
             check = False
-    
-    return filelist
+    if filelist == []:
+        return False
+    else:
+        return filelist
 
     
     

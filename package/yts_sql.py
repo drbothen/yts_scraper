@@ -173,20 +173,20 @@ def yts_magnet_query(databasename='YTS_DATA.db'):
 		return False
 def yts_gen_sql_change(table, col1, col2, dataf, datac, databasename='YTS_DATA.db'):
 	
-	try:
+	#try:
 		conn = db.connect(databasename)
 		c = conn.cursor()
 		
 		sql = """
 		UPDATE {tablen} 
 		SET {colm1} = '{datachange}' 
-		WHERE {colm2} = '{datafind}'""".format(tablen=table.replace("'","''"), colm1=col1.replace("'","''"), colm2=col2.replace("'","''"), datachange=datac.replace("'","''"), datafind=dataf.replace("'","''"))
+		WHERE {colm2} = '{datafind}'""".format(tablen=table, colm1=col1, colm2=col2, datachange=datac.replace("'","''"), datafind=dataf.replace("'","''"))
 		#print sql
 		#c.execute("UPDATE %s SET %s = %s WHERE %s = %s"%(table, col1, col2, datac, dataf))
 		c.execute(sql)
 		conn.commit()
 		conn.close()		
 		#sys.exit()
-		return True
-	except:
-		return False
+		#return True
+	#except:
+		#return False

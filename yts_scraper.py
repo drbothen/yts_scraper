@@ -3,8 +3,10 @@ import transmissionrpc
 #from smb.SMBConnection import SMBConnection
 #import os as o
 import package as yts
-import sys
 from clint.textui import progress, colored
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 
@@ -89,23 +91,46 @@ def main():
         
             for MAGs in progress.bar(rMAGs):
                 rFiles = yts.magnet2torrent(MAGs[0])
+                if rFiles == False:
+                    continue
+                movienames = []
+                subnames = []
                 for files in rFiles:
                     fslist = files.split(".")
                     if fslist[-1] == "mkv" or fslist[-1] == "mp4":
-                        checkmod = yts.yts_gen_sql_change('YTS_DATA','RAWMovieName', 'TorrentMagnetUrl', MAGs[0], files, rArgs.database)
-                        if checkmod == False:
-                            print colored.red("Write Error Movie Name")
-                            sys.exit()
+                        movienames.append(files)
+                        #checkmod = yts.yts_gen_sql_change('YTS_DATA','RAWMovieName', 'TorrentMagnetUrl', MAGs[0], files, rArgs.database)
+                        #if checkmod == False:
+                         #   print colored.red("Write Error Movie Name")
+                          #  sys.exit()
                     if fslist[-1] == "srt":
-                        checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], files, rArgs.database)
-                        if checkmod == False:
-                            print colored.red("Write Error SUBS")
-                            sys.exit()                            
-                    else:
-                        checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], 'NA', rArgs.database)
-                        if checkmod == False:
-                            print colored.red("Write Error")
-                            sys.exit()
+                        subnames.append(files)
+                        #checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], files, rArgs.database)
+                        #if checkmod == False:
+                         #   print colored.red("Write Error SUBS")
+                          #  sys.exit()                            
+                    #else:
+                     #   checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], 'NA', rArgs.database)
+                      #  if checkmod == False:
+                       #     print colored.red("Write Error")
+                        #    sys.exit()
+                if movienames != []:
+                    movienamec = ','.join(movienames)
+                    checkmod = yts.yts_gen_sql_change('YTS_DATA','RAWMovieName', 'TorrentMagnetUrl', MAGs[0], movienamec, rArgs.database)
+                    if checkmod == False:
+                        print colored.red("Write Error Movie Name")
+                        sys.exit()
+                if subnames != []:
+                    subnamec = ','.join(subnames)
+                    checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], subnamec, rArgs.database)
+                    if checkmod == False:
+                        print colored.red("Write Error SUBS")
+                        sys.exit()
+                else:
+                    checkmod = yts.yts_gen_sql_change('YTS_DATA','SUBS', 'TorrentMagnetUrl', MAGs[0], 'NA', rArgs.database)
+                    if checkmod == False:
+                        print colored.red("Write Error")
+                        sys.exit()
                             
                 listconvert = ','.join(rFiles)
                 checkmod = yts.yts_gen_sql_change('YTS_DATA','RAWFileNames', 'TorrentMagnetUrl', MAGs[0], listconvert, rArgs.database)
